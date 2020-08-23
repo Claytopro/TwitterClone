@@ -1,0 +1,36 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    line-height:50px;
+    font-size: large; 
+    margin-top: 20px;
+    margin-right: 50px;
+    margin-left: 20px;
+}
+
+.linkstyle{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.linkstyle:hover{
+    color: rgb(29, 161, 242);
+}
+
+
+
+@media only screen and (max-width: 1000px) {
+    .container {
+    
+        margin-right: 20px;
+        margin-left: 20px;
+    }
+
+    .linkstyle{
+     margin-top:25px ;
+    }
+  }

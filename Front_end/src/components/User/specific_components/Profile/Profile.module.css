@@ -1,0 +1,102 @@
+.main_container{
+    display: flex;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.content_container{
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    width: 70%;
+    height: 100%;
+    flex-direction: row;
+}
+
+.user_view{
+    width: 100%;
+    height: 100%;
+    max-width: 600px;
+}
+
+.head{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0px;
+}
+
+.head_title{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 5px;
+}
+
+.info{
+    display: flex;
+    flex-direction: column;
+    border: 0.5px solid rgba(211, 211, 211, 0.534);
+}
+
+.info_coverphoto{
+    background-color: lightgreen;
+    width: 100%;
+    height: 220px;
+}
+
+.info_profilephoto{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: -75px;
+}
+
+.info_content{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.info_links{
+    display: flex;
+    flex-direction: row;
+}
+
+.info_text{
+    padding-left: 4px;
+}
+
+.linkalign{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.profileImage{
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    border: 4px solid white;
+}
+
+.profileImg_container{
+    position: relative
+}
+
+.followbtn{
+    position: absolute; 
+    bottom: 0;
+    right: 0;
+    margin-right: 60px;
+}
+
+
+
+@media only screen and (max-width: 1200px) {
+    .content_container {
+     width: 100%;
+    }
+  }

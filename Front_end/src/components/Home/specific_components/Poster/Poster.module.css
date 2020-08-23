@@ -1,0 +1,50 @@
+
+.side{
+    position: relative;
+    width: 50%;
+    height: 95%;
+    background-color :rgb(113, 201, 248);
+    overflow: hidden;
+}
+
+.listdiv{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    width: fit-content;
+    padding: 0px;
+    margin: 0px;
+}
+
+.poster_list{
+  
+    width: fit-content;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    
+    text-align: left;
+    line-height: 50px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-size: 15px;
+    
+}
+
+.poster_item{
+    font-weight: bold;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+    color: white;
+    border: black;
+    border: 0px solid black;
+    box-sizing: border-box;
+    font-size: 20px;
+}
+
+.icon{
+    color: blue;
+    z-index: -1;
+    font-size: 100px;
+}

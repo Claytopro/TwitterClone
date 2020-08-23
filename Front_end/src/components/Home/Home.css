@@ -1,0 +1,16 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0px;
+}
+
+.wrapper-div{
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    align-content: stretch;
+    height: 100%;
+}
+
+

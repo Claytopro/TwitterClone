@@ -10,8 +10,9 @@ require('dotenv').config();
 
 //Route to allow user to login 
 // returns AccessToken for user
-router.route('/').get((req,res) => {
-
+router.route('/').post((req,res) => {
+    //console.log('reqest atetmp' + JSON.stringify(req.body));
+  
     const user =  { 
       username: req.body.username,
      }
@@ -29,7 +30,7 @@ router.route('/').get((req,res) => {
           refereshToken = jwt.sign(user,process.env.REFRESH_TOKEN)
           addRefreshToken(refereshToken)
 
-          res.status(200).json({accessToken: accessToken, refereshToken: refereshToken})
+          res.status(200).json({accessToken: accessToken, refreshToken: refereshToken})
         }else{
           res.status(400).json("invalid login information")
         }
