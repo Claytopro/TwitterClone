@@ -1,2 +1,3 @@
 # TwitterClone
-Remaking Twitter with React express mongoDb Nodejs
+Remaking Twitter with ReactJs, Nodejs Express and MongoDb 
+Also incorporating some material-ui components in front-end
