@@ -7,6 +7,8 @@ import styles from './Profile.module.css'
 import LeftSideBar from '../Functional/Left_sidebar/Leftsidebar'
 import MediaSidebar from '../Functional/Media_sidebar/Mediasidebar'
 import Tweets from '../Tweet/Tweets'
+import CoverPhoto from '../CoverPhoto/CoverPhoto'
+
 
 //material-ui components
 import Chip from '@material-ui/core/Chip'
@@ -48,7 +50,18 @@ class Profile extends Component {
         let data; 
         Auth.getUser(this.state.username, (responce) =>{
             data = responce;
-            //console.log('data in PROFILE IS:' +  JSON.stringify(data));
+            
+            let createdDate = this.ConvertDate(data.createdAt);
+
+            this.setState({
+                description: data.description,
+                replies: data.replies,
+                likes : data.likes,
+                uploadedImgs : data.uploadedPhotos,
+                tweets: data.tweets,
+                dateJoined : createdDate
+            })
+
             //chain callback to ensure asyn database calls complete before updating state
             Auth.getImages(this.state.username,data.profilePhotoPath, (response) =>{
                 //convert image to base64 string
@@ -64,16 +77,7 @@ class Profile extends Component {
                });
             })
 
-           let createdDate = this.ConvertDate(data.createdAt);
-
-            this.setState({
-                description: data.description,
-                replies: data.replies,
-                likes : data.likes,
-                uploadedImgs : data.uploadedPhotos,
-                tweets: data.tweets,
-                dateJoined : createdDate
-            })
+ 
         })
     }
 
@@ -104,10 +108,10 @@ class Profile extends Component {
                         </div>
 
                         <div className = {styles.info}>
-                            <div className = {styles.info_coverphoto}>
+                        {/*Cover Photo  */}
+                           <CoverPhoto imageName = {this.state.coverPhoto} user = {this.state.username}/>
 
-                            </div>
-
+                        {/*TODO REFACTOR THIS INTO ITS OWN COMPONENT */}
                             <div className = {styles.info_profilephoto}>
                                 <div className = {styles.profileImg_container}>
                                     <img src = {this.state.profileImg} className = {styles.profileImage} alt=""></img>

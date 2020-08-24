@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Auth from '../../../Auth'
+import Auth from '../../../../Auth'
 
 import styles from './AsynImages.module.css'
 
@@ -17,14 +17,12 @@ import CircularProgress from '@material-ui/core/CircularProgress'
         }
 
         componentDidMount(){
-            
             this.state.imagesToPull.forEach((item,index) =>{
                 this.pullPhoto(item,this.state.user)
             })
-
         }
 
-
+        //pull photo from user's directory on backend server
         pullPhoto = (imgName,user) => {
                 Auth.getImages(user,imgName, (response) =>{
                     //convert image to base64 string
@@ -56,18 +54,31 @@ import CircularProgress from '@material-ui/core/CircularProgress'
                     )
                 }else if (numberOfImages <= 4){
                     // 3 or 4 images
+                    let imgz = []
+                    this.state.images.map((img, i) => {    
+                        imgz[i] =(
+                            <div  className = {styles.ManyImage_div}>
+                                <img key = {keys[i]} src = {img} className = {styles.manyImage} alt=""></img>
+                            </div>
+                        )
+                       })
+
                     return(
-                        <div className = {styles.Image_container}>
-                             {this.state.images.map((img, i) => {    
-                             return (
-                                <img key = {keys[i]} src = {img} className = {styles.oneImage} alt=""></img>
-                             ) 
-                            })}
+                        <div className = {styles.ManyImage_container}>
+                            <div className = {styles.stackedImage_container}>
+                                {imgz[0]}
+                                {imgz[1]}
+                            </div>
+                            <div className = {styles.stackedImage_container}>
+                                {imgz[2]}
+                                {(imgz !== undefined) && imgz[3]}
+                            </div>
                         </div>
                     )
                 }else {
+                    //TODO ADD when more than 5 images are part of tweet
                     return(
-                        <div className = {styles.Image_container}>
+                        <div className = {styles.ManyImage_container}>
                              {this.state.images.map((img, i) => {    
                              return (
                                 <img key = {keys[i]} src = {this.state.images[i]} className = {styles.oneImage} alt=""></img>

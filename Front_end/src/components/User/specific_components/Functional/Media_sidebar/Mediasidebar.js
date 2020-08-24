@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import styles from './mediasidebar.module.css'
 
+//react-select components
+import AsyncSelect from 'react-select/async';
+
 class Mediasidebar extends Component {
 
     constructor(props){
         super(props);
 
         this.state = {
-            seachbar: null,
+            seachbar: '',
             userImgs: [],
         }
     }
@@ -19,12 +22,23 @@ class Mediasidebar extends Component {
         });
     }
 
-    render(){
-        return(    
-            <div>
-                <input type = "text" name = "seachbar" onChange={ this.handleChange } ></input>
+    findUsers = () => {
+        //call databse query
+    }
 
-               Media sidebar
+    loadOptions = (inputValue, callback) => {
+        this.findUsers(inputValue)    
+    };
+
+  
+    render(){
+
+        return(    
+            <div className = {styles.mediasidebar_container}> 
+                <div>
+                    seach bar
+                       
+                </div>              
             </div>
         )
     }

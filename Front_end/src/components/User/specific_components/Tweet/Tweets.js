@@ -4,7 +4,7 @@ import styles from './Tweet.module.css'
 
 //components
 import {Link} from 'react-router-dom';
-import AsyncImage from '../../../Universal/AsyncImage/AsyncImage'
+import AsyncImage from '../AsyncImage/AsyncImage'
 
 //import from material-ui
 import Avatar from '@material-ui/core/Avatar'

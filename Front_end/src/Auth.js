@@ -84,6 +84,7 @@ class Auth {
     }
 
    
+    //Call to retrieve image from server return null if image does not exist
     getImages(username,img,callback){
         axios.get('http://localhost:5000/images/' + username +'/' + img,{ responseType: 'arraybuffer' },)
         .then((res) => {
@@ -91,8 +92,8 @@ class Auth {
             if(callback) callback(res.data);
             return(res.data);
         },(error) =>{
-            
-            if(callback) callback(error.response.data);
+            //if image cant be found return null
+            if(callback) callback(null);
             return(error.response.data);
         })
     }
