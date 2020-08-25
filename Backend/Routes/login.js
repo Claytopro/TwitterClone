@@ -84,9 +84,11 @@ router.route('/logout').delete((req,res) =>{
 //creates user login information and instantiates user in users collection
 router.route('/register').post((req,res) => {
     const username = req.body.username.trim();
+    const displayName = req.body.username.trim();
     const email = req.body.email;
     const password = req.body.password;  
 
+    //create mongodb schema objects to pass into database
     const newLogin = new LoginValidation({
         username,
         email,
@@ -95,6 +97,7 @@ router.route('/register').post((req,res) => {
 
     const newUser = new User({
       username,
+      displayName,
     });
 
    
@@ -114,7 +117,6 @@ router.route('/register').post((req,res) => {
         res.json('Error:' + err)
       }
     })
-    
 });
 
 // middleware function that validates the incoming requests AccessToken

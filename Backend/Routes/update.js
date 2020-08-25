@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken'); // validating user 
 const router = require('express').Router();
 const shortid = require('shortid');
+const imagemin = require("imagemin");
+const imageminPngquant = require("imagemin-pngquant");
+const imageminMozjpeg = require('imagemin-mozjpeg');
+
 const _ = require('lodash');
+
 require('dotenv').config();
 let User = require('../Models/user.model');
 
-/*
-this route requires ('express-fileupload') to be used in app to function
-*/
 
 //POST request for uploading and changing user's profile photo
 router.route('/avatar').post((req, res) => {
@@ -32,7 +34,7 @@ router.route('/avatar').post((req, res) => {
                     let file = req.files.file
                     file.mv('./uploads/'+username+ '/' + filename)
 
-                    res.sendStatus(200)
+                    res.sendStatus(200).json({message:"updated Avatar photo"})
                 }else{
                     res.sendStatus(403).json('Error:' + err)
                 }
@@ -81,18 +83,20 @@ router.route('/avatar').post((req, res) => {
     const authHeader = req.get('authorization')
     const token = authHeader && authHeader.split(' ')[1]
     
-    if(token == null) return res.sendStatus(401).json({message : "lack permission"})
+    //if(token == null) res.sendStatus(401).json({message : "lack permission"})
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
         if(err){
             console.log(err);
 
-            return res.sendStatus(401).json({message : "lack permission"})
-        }else {
+            res.status(401).json({message : "lack permission"})
+        }else { // no errors
             let username = user.username
+            let isRetweet = req.body.isRetweet
             let message = req.body.message
             let photos = []
 
+            //TODO: reduce this to a function
             if(req.files){
                 const file = req.files.file;
                
@@ -100,16 +104,20 @@ router.route('/avatar').post((req, res) => {
                 if(Array.isArray(file)){
                     _.forEach(_.keysIn(file), (key) => {
                         //TODO: add date to file to ensure 100% uniqueness, good for now tho
-                          //create unique filename and add it to array that associated files to tweet
-                          let fileExtension = file[key].name.split('.')[1]
+                        //create unique filename and add it to array that associated files to tweet
+                        let fileExtension = file[key].name.split('.')[1]
                           let filename = shortid.generate().toString().concat('.' +fileExtension)
                           photos.push(filename)
                           
+                          //TODO: ensure image is jpg then remove png compressor package
+
                           //add file to server uploads directory
-                          file[key].mv('./uploads/'+username+ '/'+filename, function (err){
+                          file[key].mv('./uploadsUncompressed/'+username+ '/'+filename, function (err){
                               if(err){
                                   console.log(err);
-                                 // return res.send(err);
+                                 res.json('Error uploading photos')
+                              }else{
+                                compressPhoto(username,filename)
                               }
                           }) 
                   })
@@ -118,48 +126,49 @@ router.route('/avatar').post((req, res) => {
                     let fileExtension = file.name.split('.')[1]
                     let filename = shortid.generate().toString().concat('.' +fileExtension)
                     photos.push(filename)
-                    file.mv('./uploads/'+username+ '/'+filename, function (err){
+                    file.mv('./uploadsUncompressed/'+username+ '/'+filename, function (err){
                         if(err){
                             console.log(err);
-                           // return res.send(err);
-                        }
+                            res.status(403).json('Error:' + err)
+                        }else{
+                            compressPhoto(username,filename)
+                          }
                     }) 
                 }
 
                 //associates uploaded images to user that uploaded them
                 User.updateOne({username:username},{$push: {uploadedPhotos:{$each : photos}}},function(err,docs){
-                    if(!err){
-                        console.log('sucessfully uploded ' + photos);
-                    // res.sendStatus(200)
-                    }else{
+                    if(err){
                         console.log('/tweet :pushing array ' + err);
-                        res.sendStatus(403).json('Error:' + err)
+                        res.status(403).json('Error:' + err)
                     }
                 })
-            }
+            }//handle files
 
 
             //create tweet object
             const tweet = {
                 message : message,
+                isRetweet : isRetweet,
                 user : username,
                 attachedPhotos : photos
             }    
     
             //adds tweet to database for user associated with the autentication token
-            User.updateOne({username:username},{$push: {tweets: tweet}},function(err){
+            //in order to push new tweet to the front of the tweet array of the specified user:
+            //must use $each in conjunction with $ position even when only adding 1 tweet to database
+            User.updateOne({username:username},{$push:{tweets : {$each : [tweet], $position : 0 }}},function(err){
                 if(!err){
                     console.log('successfully added tweet');
-                    //res.status(201).json('Tweet added')
+                    res.status(200).json({message :'successfully added tweet'})
                 }else{
                     console.log('Error in update /tweet :' + err);
-                    return res.status(403).json('Error:' + err)
+                    res.status(403).json('Error:' + err)
                 }
-            })
-        }
-    })//jwt verify
+            })//Adding tweet
 
-    res.status(200).json('Tweet Created')
+        } //end of no errors
+    })//jwt verify
 })
 
  
@@ -196,6 +205,93 @@ router.route('/deletetweet').delete((req, res) =>{
 
 })
 
+/*
+Route to change posible display information in user's schema
+user the following parameters to update information in schema : 
+"description" , "displayName" , "website" , "location"
+*/
+router.route('/profileinfo').post((req, res) =>{
+    const authHeader = req.get('authorization')
+    const token = authHeader && authHeader.split(' ')[1]
 
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
+        if(err){
+            //console.log(err);
+            res.status(401).json({message : "lack permission in route /displayname"})
+        }else{
+            let username = user.username
+            let  updateQuery = {};
+            
+            //check if paramter name exists req 
+            if(req.body.displayName){
+                updateQuery.displayName = req.body.displayName
+            }
+
+            if(req.body.description){
+                updateQuery.description = req.body.description
+            }
+
+            if(req.body.website){
+                updateQuery.website = req.body.website
+            }
+
+            if(req.body.location){
+                updateQuery.location = req.body.location
+            }
+
+            User.updateOne({username:username},updateQuery,function(err){
+                if(err){
+                    res.status(403).json('Error:' + err)
+                }else{
+                    res.status(200).json({message:"updated Display name photo"})
+                }
+            })
+        }
+    })//jwt verification
+})
+
+//route used for quickly refreshing searchbar with predictive username
+router.route('/search').get((req, res) => {
+    let toFind = req.body.username
+    //TODO optimize this so it does not scan the whole document page
+    // maybe look here:
+    //https://stackoverflow.com/questions/10610131/checking-if-a-field-contains-a-string
+    User.find( { username : {$regex : ".*"+toFind+".*"}}, 
+        //TODO : handle error 
+        function(err,docs){
+            if(err){
+                console.log(err);
+            }else{
+                if(docs.length > 0) {
+                   //TODO RETURN 10 choices
+                    res.status(200).json({username : docs[0].username,
+                         displayName : docs[0].displayName})
+                }else{
+                    //create new user and send blank w/ username
+                    
+                    res.status(200).json({username : "" , displayName : ""})
+                }
+            }
+        })
+})
+
+
+//Helper function for compressing images that are being uploaded
+//current version does not allow for files to be sent to same folder, that is why there must be two
+function compressPhoto(username,filename) {
+    //console.log('compressing photos' + 'uploads/'+username +'/'+filename);
+
+    (async () => {
+        await imagemin(['uploadsUncompressed/'+username +'/'+filename], {
+            destination: 'uploads/'+username,
+            plugins: [
+                imageminMozjpeg({quality: 50}),
+                imageminPngquant({
+                    quality: 50
+                })
+            ]
+        }); 
+    })();
+}
 
  module.exports = router;
