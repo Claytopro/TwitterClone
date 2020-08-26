@@ -268,11 +268,131 @@ router.route('/search').get((req, res) => {
                          displayName : docs[0].displayName})
                 }else{
                     //create new user and send blank w/ username
-                    
                     res.status(200).json({username : "" , displayName : ""})
                 }
             }
         })
+})
+
+
+//Route to add follower to specific user's following list 
+//Adds the following user to the follower list of the followed user
+//relies on user sending authentication token to ensure authorized follow
+router.route('/follow').post((req, res) => {
+    const authHeader = req.get('authorization')
+    const token = authHeader && authHeader.split(' ')[1]
+    const toFollow = req.body.follow
+    if(!toFollow) return  res.status(401).json({message : "no input follow"})
+
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
+        if(err){
+            //console.log(err);
+            res.status(401).json({message : "lack permission in route /follow"})
+        }else{
+            let username = user.username
+
+            User.updateOne({username:toFollow},{$addToSet :{followers :username}},function(err,doc){
+                if(err || doc.nModified === 0){
+                    if(doc.nModified === 0) err = "User does not exist"
+                    res.status(403).json('Error:' + err)
+                }else{
+                    User.updateOne({username:username},{$addToSet :{following :toFollow}},function(err){
+                        if(err){
+                            res.status(403).json('Error:' + err)
+                        }else{
+                            res.status(200).json({message:"updated follow list:" + toFollow})
+                        }
+                    })
+                }
+            })
+            //The $addToSet operator adds a value to an array unless the value is already present, in which case $addToSet does nothing to that array.
+            
+
+            
+
+        }
+    })//authentication
+})
+
+
+router.route('/unfollow').post((req, res) => {
+    const authHeader = req.get('authorization')
+    const token = authHeader && authHeader.split(' ')[1]
+    const toUnfollow = req.body.unfollow
+    if(!toUnfollow) return  res.status(401).json({message : "no input follow"})
+
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
+        if(err){
+            //console.log(err);
+            res.status(401).json({message : "lack permission in route /unfollow"})
+        }else{
+            let username = user.username
+
+            //$pull with remove the specific element from the array, dont need to use &pullAll becasue we have ensure
+            //names will be unique in the following array 
+            User.updateOne({username:username},{$pull :{following :toUnfollow}},function(err){
+                if(err){
+                    res.status(403).json('Error:' + err)
+                }else{
+                    //after removed from following list do same for the user's followers list
+                    User.updateOne({username:toUnfollow},{$pull :{followers :username}},function(err){
+                        if(err){
+                            res.status(403).json('Error:' + err)
+                        }else{
+                            res.status(200).json({message:"unfollowed: " + toUnfollow})
+                        }
+                    })
+                }
+            })
+        }
+    })//authentication
+})
+
+
+
+
+
+//Route to pull tweets from all that the user is following 
+// to display as the "main feed" for the user
+router.route('/feed').get((req, res) => {
+    const authHeader = req.get('authorization')
+    const token = authHeader && authHeader.split(' ')[1]
+
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
+        if(err){
+            //console.log(err);
+            res.status(401).json({message : "lack permission in route /feed"})
+        }else{ //authenticated successfully
+            let username = user.username
+            User.findOne({ username : username} , function(err,doc){
+                if(err){
+                    res.status(403).json({message : "User does not exsit"})
+                }else{
+                    let following = doc.following
+                    
+
+                    User.aggregate([
+                        //get documents that usernames match following array
+                        { $match    : { 'username' : { $in : following } } }, 
+                        //expand array of tweets into stream of documents
+                        { "$unwind": "$tweets" },
+                        //sort documents based on createdAt 
+                        { $sort: {'tweets.createdAt': -1 }},
+                        //group all tweets backtogether
+                        { "$group": {
+                            _id : 0,
+                            "combinedTweets": { "$push": "$tweets"}
+                        }},
+                    ]).exec(function (err, data) {
+                        //return array of (JSON object)tweets aggregated for all user that are being followed 
+                        res.status(200).json(data[0].combinedTweets)
+                    })
+                   
+                }
+            })//findOne
+        }
+    })//authentication
+
 })
 
 
