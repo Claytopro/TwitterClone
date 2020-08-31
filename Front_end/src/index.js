@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import User from './components/User/User.js'
 import Register from './components/Register/Register'
 import Home from './components/Home/Home.js';
-import {BrowserRouter,Route,Switch} from 'react-router-dom';
+import {BrowserRouter,Route,Switch,withRouter} from 'react-router-dom';
 
 
 function App (){
@@ -16,7 +16,7 @@ function App (){
           <Route exact path ="/" component = {Home}/>
           <Route exact path ="/home" component = {Home}/>
           <Route exact path ="/register" component = {Register}/>
-          <Route path = "*" component = {User} />
+          <Route exact path = "*" component = {withRouter(User)} />
         </Switch>
         
       </div>
@@ -24,11 +24,8 @@ function App (){
 };
 
 
-ReactDOM.render(
+ReactDOM.render((
   <BrowserRouter>
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-  </BrowserRouter>,
-  document.getElementById('root')
-);
+    <Route component={App} />
+  </BrowserRouter>
+), document.getElementById('root'))

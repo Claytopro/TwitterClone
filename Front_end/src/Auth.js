@@ -88,7 +88,7 @@ class Auth {
     getImages(username,img,callback){
         axios.get('http://localhost:5000/images/' + username +'/' + img,{ responseType: 'arraybuffer' },)
         .then((res) => {
-            
+           
             if(callback) callback(res.data);
             return(res.data);
         },(error) =>{

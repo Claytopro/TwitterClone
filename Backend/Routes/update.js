@@ -32,19 +32,46 @@ router.route('/avatar').post((req, res) => {
                 if(!err){
                     //save uploaded file to uploads directory with create 'unique' file name
                     let file = req.files.file
-                    file.mv('./uploads/'+username+ '/' + filename)
+                    //uploads file then compresses it and send compressed file to uploads folder which will be 
+                    //sent to users
+                    file.mv('./uploadsUncompressed/'+username+ '/' + filename, function (err){
+                        if(err){
+                            console.log(err);
+                            res.status(403).json('Error:' + err)
+                        }else{
+                            compressPhoto(username,filename)
+                          }
+                    }) 
 
-                    res.sendStatus(200).json({message:"updated Avatar photo"})
+                    res.status(200).json({message:"updated Avatar photo"})
                 }else{
-                    res.sendStatus(403).json('Error:' + err)
+                    res.status(403).json('Error:' + err)
                 }
             })
         }else{
             console.log("Error from uploads route /:" + err);
-            return res.sendStatus(403)
+            return res.status(403)
         }
     })
  })
+
+
+ router.route('/avatarpic').post((req, res) => {
+    if(!req.body.username) return res.status(401).json({message:"Cant find " + username})
+
+   let username = req.body.username;
+   User.findOne({username:username}, function(err,doc){
+        if(err){
+            res.status(401).json({message:"Cant find " + username})
+        }else{
+            if(doc === null) return res.status(401).json({message:"Cant find" + username})
+            res.status(200).json({profileImage:doc.profilePhotoPath,displayName : doc.displayName})
+        }
+   })
+
+})
+
+
 
 
 //POST request for adding a tweet to database, User identity taken from authentication token
@@ -251,7 +278,7 @@ router.route('/profileinfo').post((req, res) =>{
 })
 
 //route used for quickly refreshing searchbar with predictive username
-router.route('/search').get((req, res) => {
+router.route('/search').post((req, res) => {
     let toFind = req.body.username
     //TODO optimize this so it does not scan the whole document page
     // maybe look here:
@@ -264,8 +291,12 @@ router.route('/search').get((req, res) => {
             }else{
                 if(docs.length > 0) {
                    //TODO RETURN 10 choices
-                    res.status(200).json({username : docs[0].username,
-                         displayName : docs[0].displayName})
+                    let toReturn = [];
+                    docs.forEach(item =>{
+                        toReturn.push({username : item.username,
+                            displayName : item.displayName})
+                    })
+                    res.status(200).json(toReturn)
                 }else{
                     //create new user and send blank w/ username
                     res.status(200).json({username : "" , displayName : ""})
@@ -370,7 +401,7 @@ router.route('/feed').get((req, res) => {
                 }else{
                     let following = doc.following
                     
-
+                    //aggreagate all tweets from the followed users
                     User.aggregate([
                         //get documents that usernames match following array
                         { $match    : { 'username' : { $in : following } } }, 

@@ -8,7 +8,7 @@ import LeftSideBar from '../Functional/Left_sidebar/Leftsidebar'
 import MediaSidebar from '../Functional/Media_sidebar/Mediasidebar'
 import Tweets from '../Tweet/Tweets'
 import CoverPhoto from '../CoverPhoto/CoverPhoto'
-
+import FollowTab from '../Functional/FollowTab/FollowTab'
 
 //material-ui components
 import Chip from '@material-ui/core/Chip'
@@ -25,13 +25,20 @@ class Profile extends Component {
        
         this.state = {
             username: props.username,
+            displayName : '',
             description : '',
+            location : '',
+            website : '',
             replies : [],
             likes : [],
+            following : null,
+            followers : null,
             profileImg: '',
+            coverPhoto : '',
             uploadedImgs: [],
             tweets: [],
             dateJoined : '',
+            hasLoaded : false,
         }
     }
 
@@ -42,7 +49,7 @@ class Profile extends Component {
         let months = [ "January", "February", "March", "April", "May", "June", 
            "July", "August", "September", "October", "November", "December" ];
         let toConvert = dateCreate.split('-');
-        return months[parseInt(toConvert[1])] + ' ' + toConvert[0]  
+        return months[parseInt(toConvert[1])-1] + ' ' + toConvert[0]  
     }
 
     componentDidMount(){
@@ -50,16 +57,23 @@ class Profile extends Component {
         let data; 
         Auth.getUser(this.state.username, (responce) =>{
             data = responce;
-            
+            if(data === null) return
             let createdDate = this.ConvertDate(data.createdAt);
-
+           
             this.setState({
+                displayName : data.displayName,
                 description: data.description,
+                location : data.location,
+                website : data.website,
                 replies: data.replies,
                 likes : data.likes,
+                following : data.following,
+                followers : data.followers,
+                coverPhoto : data.coverPhotoPath,
                 uploadedImgs : data.uploadedPhotos,
                 tweets: data.tweets,
-                dateJoined : createdDate
+                dateJoined : createdDate,
+                hasLoaded : true,
             })
 
             //chain callback to ensure asyn database calls complete before updating state
@@ -75,6 +89,7 @@ class Profile extends Component {
                this.setState({
                    profileImg : "data:;base64," + base64,
                });
+               
             })
 
  
@@ -108,9 +123,8 @@ class Profile extends Component {
                         </div>
 
                         <div className = {styles.info}>
-                        {/*Cover Photo  */}
-                           <CoverPhoto imageName = {this.state.coverPhoto} user = {this.state.username}/>
-
+                        {/*Cover Photo, ensure only loads when coverphoto is set*/}
+                        {this.state.hasLoaded && <CoverPhoto imageName = {this.state.coverPhoto} user = {this.state.username}/>}
                         {/*TODO REFACTOR THIS INTO ITS OWN COMPONENT */}
                             <div className = {styles.info_profilephoto}>
                                 <div className = {styles.profileImg_container}>
@@ -124,25 +138,26 @@ class Profile extends Component {
                                         />
                                     </div>
                                 </div>
-                                <h3 style={{marginBottom: '0px',marginTop : '0px'}}>{this.state.username}</h3>
-                                <span style={{color: 'gray'}}>@{this.state.username}</span>
+                                {/*display under avatar*/}
+                                <h3 style={{marginBottom: '0px',marginTop : '0px',paddingLeft:'4px'}}>{this.state.displayName}</h3>
+                                <span style={{color: 'gray',paddingLeft:'4px'}}>@{this.state.username}</span>
                             </div>
                           
                            <div className = {styles.info_content}>
                                <div className = {styles.info_text}>
-                                    description:
                                     {this.state.description}
                                </div>
                                
                                 <div className = {styles.info_links}>
                                     <span className = {styles.linkalign}>
                                        <LocationIcon style={{paddingRight: '3px'}}/>
-                                       <p>Los angles</p>
+                                    <p>{this.state.location}</p>
                                     </span> 
                                    
+                                   {/*TODO: send to external site*/}
                                    <span className = {styles.linkalign}>
                                         <LinkIcon style={{paddingRight: '3px'}}/> 
-                                        <p>link.com</p>
+                                        <a target="_blank" href={'www.' + this.state.website} style = {{color:"black",textDecoration: 'none'}}>{this.state.website}</a>
                                     </span> 
 
                                    <span className = {styles.linkalign}>
@@ -150,10 +165,8 @@ class Profile extends Component {
                                        <p>{this.state.dateJoined} </p>
                                     </span> 
                                 </div>
-
-                                <div className = {styles.info_text}>
-                                    pLACEHOLDER Following : , Followers : 
-                                </div>
+                                {/*Ensure follower arrays are loaded before sending info to component */}
+                                {(this.state.followers) &&<FollowTab followers = {this.state.followers} following = {this.state.following} />}
                            </div>
                         </div>
 

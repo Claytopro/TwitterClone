@@ -55,11 +55,13 @@ import CircularProgress from '@material-ui/core/CircularProgress'
                 }else if (numberOfImages <= 4){
                     // 3 or 4 images
                     let imgz = []
-                    this.state.images.map((img, i) => {    
-                        imgz[i] =(
-                            <div  className = {styles.ManyImage_div}>
-                                <img key = {keys[i]} src = {img} className = {styles.manyImage} alt=""></img>
-                            </div>
+                    this.state.images.map((img, i) => { 
+                        return(
+                            imgz[i] =(
+                                <div  className = {styles.ManyImage_div}>
+                                    <img key = {keys[i]} src = {img} className = {styles.manyImage} alt=""></img>
+                                </div>
+                            )
                         )
                        })
 
@@ -91,7 +93,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
                 }else{
                     return(
                         <div className = {styles.loading}>
-                           <CircularProgress/>
+                            {(this.state.imagesToPull.length > 1)&&<CircularProgress/>}
                         </div>
                     )
                 }

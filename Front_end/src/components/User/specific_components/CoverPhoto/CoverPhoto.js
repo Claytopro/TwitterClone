@@ -15,7 +15,8 @@ class CoverPhoto extends Component {
 
         componentDidMount()
         {
-            this.pullPhoto(this.state.coverPhotoName,this.state.user)
+            if(this.state.coverPhotoName !== '') this.pullPhoto(this.state.coverPhotoName,this.state.user)
+            
         }
 
         //pull photo from user's directory on backend server
@@ -31,7 +32,7 @@ class CoverPhoto extends Component {
                             '',
                             ),
                         );
-    
+
                         if(base64 !== undefined){
                             this.setState({
                                 coverPhoto: "data:;base64," + base64,
@@ -40,15 +41,15 @@ class CoverPhoto extends Component {
                         }
                     }     
                 })
-        }
+        }//pullphoto
 
         render(){
            return(
-            <div className = {styles.coverphoto_container}>
-               
-                {this.state.imgLoaded && <img src = {this.state.coverPhoto} className = {styles.coverphoto} alt=""></img>}
-               
-            </div>
+                <div className = {styles.coverphoto_container}>
+                
+                    {this.state.imgLoaded && <img src = {this.state.coverPhoto} className = {styles.coverphoto} alt=""></img>}
+                
+                </div>
            )
         }
             

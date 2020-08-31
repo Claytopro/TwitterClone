@@ -1,0 +1,23 @@
+.popover_class{
+    top: '50px'
+}
+
+.Popper{
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    background-color: white;
+    margin: 10px;
+}
+
+.avatar{
+   border: 0.5px solid gray;
+}
+
+.avatar:hover{
+    filter: grayscale(0.5);
+}
+
+.container{
+   
+}

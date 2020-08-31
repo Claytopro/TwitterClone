@@ -63,7 +63,7 @@ function toDate(dateCreate){
     let months = [ "January", "February", "March", "April", "May", "June", 
     "July", "August", "September", "October", "November", "December" ];
     let toConvert = dateCreate.split('-');
-    return months[parseInt(toConvert[1])] + ' ' + toConvert[0]  
+    return months[parseInt(toConvert[1])-1] + ' ' + toConvert[0]  
 }
 
 
