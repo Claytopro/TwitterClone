@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import axios from 'axios'
 
 import styles from './searchbar.module.css'
@@ -55,23 +55,24 @@ class SearchBar extends Component {
                
                     <input type = "text" className ={styles.searchbar_input} name = "searchbar" onChange = {this.handleChange} placeholder="Search" 
                     onFocus = {() => {this.setState({showSuggest:true})}}
-                    onBlur = {() => {this.setState({showSuggest:false})}}/>
+                    onBlurCapture  = {() => {this.setState({showSuggest:false})}}
+                    />
                   
                </div>
 
-                {true && 
+                {this.state.showSuggest && 
                 <div className = {styles.suggested}> 
                         {(this.state.searchbar.length === 0) && 
                         <p style = {{marginTop:'0px'}}>Try searching for people, topics, or keywords</p>
                         }
                        {(this.state.users.length > 0) && this.state.users.map((user, i) => {  
-                            if(i>10) return   
+                            if(i>10) return false  
                             return (
                                 <div key = {user.username} className = {styles.userList} styles = {{height:'100px'}}>
                                     <TinyAvatar username = {user.username}/>
                                     <div className = {styles.userList_names}>
                                     <span style = {{fontWeight: "bolder",overflow:'hidden'}}>{user.displayName} </span>  
-                                    <Link to = {'/' + user.username} onClick= {()=>{return true}} className = {styles.link}>@{user.username} </Link> 
+                                    <span onMouseDown = {()=>{this.props.history.push("/" + user.username)}} className = {styles.link}>@{user.username} </span> 
                                     </div>
                                 </div>
                                 )
@@ -85,4 +86,4 @@ class SearchBar extends Component {
     }
 }
 
-export default SearchBar;
+export default withRouter(SearchBar);

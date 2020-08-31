@@ -77,7 +77,10 @@ class Auth {
             if(callback) callback(res.data);
             return(res.data);
         },(error) =>{
+
+            if(!error.response) return null
             console.log("error in auth backend failed to send empty user." + error.response);
+            
             if(callback) callback(error.response.data);
             return(error.response.data);
         })
