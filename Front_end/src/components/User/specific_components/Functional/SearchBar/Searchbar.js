@@ -55,11 +55,11 @@ class SearchBar extends Component {
                
                     <input type = "text" className ={styles.searchbar_input} name = "searchbar" onChange = {this.handleChange} placeholder="Search" 
                     onFocus = {() => {this.setState({showSuggest:true})}}
-                    onBlur = {() => {this.setState({showSuggest:false,})}}/>
+                    onBlur = {() => {this.setState({showSuggest:false})}}/>
                   
                </div>
 
-                {this.state.showSuggest && 
+                {true && 
                 <div className = {styles.suggested}> 
                         {(this.state.searchbar.length === 0) && 
                         <p style = {{marginTop:'0px'}}>Try searching for people, topics, or keywords</p>
@@ -71,7 +71,7 @@ class SearchBar extends Component {
                                     <TinyAvatar username = {user.username}/>
                                     <div className = {styles.userList_names}>
                                     <span style = {{fontWeight: "bolder",overflow:'hidden'}}>{user.displayName} </span>  
-                                    <Link to = {'/' + user.username} className = {styles.link}>@{user.username} </Link> 
+                                    <Link to = {'/' + user.username} onClick= {()=>{return true}} className = {styles.link}>@{user.username} </Link> 
                                     </div>
                                 </div>
                                 )
