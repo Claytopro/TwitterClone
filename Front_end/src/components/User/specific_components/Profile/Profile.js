@@ -9,6 +9,8 @@ import MediaSidebar from '../Functional/Media_sidebar/Mediasidebar'
 import Tweets from '../Tweet/Tweets'
 import CoverPhoto from '../CoverPhoto/CoverPhoto'
 import FollowTab from '../Functional/FollowTab/FollowTab'
+import SendTweet from '../Functional/SendTweet/SendTweet'
+
 
 //material-ui components
 import Chip from '@material-ui/core/Chip'
@@ -16,6 +18,7 @@ import BackIcon from '@material-ui/icons/ArrowBack'
 import LocationIcon from '@material-ui/icons/LocationOnOutlined'
 import LinkIcon from '@material-ui/icons/Link'
 import CalendarIcon from '@material-ui/icons/DateRangeRounded'
+import Backdrop from '@material-ui/core/Backdrop'
 
 
 class Profile extends Component {
@@ -39,6 +42,7 @@ class Profile extends Component {
             tweets: [],
             dateJoined : '',
             hasLoaded : false,
+            openBackdrop : false,
         }
     }
 
@@ -75,7 +79,7 @@ class Profile extends Component {
                 dateJoined : createdDate,
                 hasLoaded : true,
             })
-
+          
             //chain callback to ensure asyn database calls complete before updating state
             Auth.getImages(this.state.username,data.profilePhotoPath, (response) =>{
                 //convert image to base64 string
@@ -101,12 +105,23 @@ class Profile extends Component {
         console.log("follow");
     }
 
+    openBackdrop = () => {
+        this.setState({openBackdrop:true})
+    }
+
+    closeBackdrop = () => {
+        this.setState({openBackdrop:false})
+    }
 
 
     render(){
         return(
             <div className = {styles.main_container}>
                 <div className = {styles.content_container}>
+                    <Backdrop style = {{zIndex: 999}} open={this.state.openBackdrop} onClick= {this.closeBackdrop}>
+                        <img src = {this.state.profileImg} className = {styles.profileImage_backdrop} alt=""></img>
+                    </Backdrop>
+
                     <LeftSideBar/>
 
                     {/*Beginning of User information div*/}
@@ -128,7 +143,7 @@ class Profile extends Component {
                         {/*TODO REFACTOR THIS INTO ITS OWN COMPONENT */}
                             <div className = {styles.info_profilephoto}>
                                 <div className = {styles.profileImg_container}>
-                                    <img src = {this.state.profileImg} className = {styles.profileImage} alt=""></img>
+                                    <img src = {this.state.profileImg} className = {styles.profileImage} alt="" onClick={this.openBackdrop}></img>
                                     <div className = {styles.followbtn}>
                                         <Chip
                                             variant="outlined" 
@@ -157,7 +172,7 @@ class Profile extends Component {
                                    {/*TODO: send to external site*/}
                                    <span className = {styles.linkalign}>
                                         <LinkIcon style={{paddingRight: '3px'}}/> 
-                                        <a target="_blank" href={'www.' + this.state.website} style = {{color:"black",textDecoration: 'none'}}>{this.state.website}</a>
+                                        <a target="" href={'www.' + this.state.website} style = {{color:"black",textDecoration: 'none'}}>{this.state.website}</a>
                                     </span> 
 
                                    <span className = {styles.linkalign}>
@@ -170,16 +185,20 @@ class Profile extends Component {
                            </div>
                         </div>
 
+                        <SendTweet />
+
                         <div>
                             {this.state.tweets.map(tweet => (
                                 <Tweets key={tweet._id} tweet = {tweet} avatarImg = {this.state.profileImg}/>
                             ))}
                         </div>
                         
-                    </div>
-                    {/*end of user info div */}
-                    <MediaSidebar/>
+                    </div>{/*end of user info div */}
+                    
+                    <MediaSidebar user = {this.state.username} userImages = {this.state.uploadedImgs}/>
                 </div>
+                
+                
             </div>
         )
     }

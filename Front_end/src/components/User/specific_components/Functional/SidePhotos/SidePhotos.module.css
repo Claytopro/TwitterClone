@@ -1,0 +1,21 @@
+.sidePhotos_container{
+    display: grid;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-left: 10px;
+    grid-template-columns: auto auto; 
+    height: 250px;
+    border-radius: 10px;
+    width: 100%;
+    border: 0.5px solid lightgray;
+}
+
+.ManyImage_div{
+  
+    overflow: hidden;
+    object-fit: scale-down;
+}
+
+.manyImage{
+    max-width:100%;
+}

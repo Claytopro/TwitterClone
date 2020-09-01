@@ -101,6 +101,29 @@ class Auth {
         })
     }
 
+
+    sendTweet(message , isRetweet){
+        this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk4OTc4MTcxLCJleHAiOjE1OTg5ODE3NzF9.SLnuUilUJewXxHBTKLocDaJkRoEkJWpKKo-7n3UC1-s'
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.token
+        }
+
+        axios.post('http://localhost:5000/update/tweet',{
+            "message" : message,
+            'isRetweet' : isRetweet,
+        },{
+            headers: headers
+        }).then((res) => {
+           console.log(res);
+            
+        },(error) =>{
+            console.log(error);
+
+            
+        })   
+    }
+
 }
 
 export default new Auth()

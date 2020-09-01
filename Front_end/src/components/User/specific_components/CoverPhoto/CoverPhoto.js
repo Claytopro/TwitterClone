@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Auth from '../../../../Auth'
 import styles from './CoverPhoto.module.css'
 
+//material-ui
+import Backdrop from '@material-ui/core/Backdrop'
+
 class CoverPhoto extends Component {
         constructor(props){
             super(props);
@@ -10,6 +13,7 @@ class CoverPhoto extends Component {
                 coverPhotoName: props.imageName,
                 user : props.user,
                 imgLoaded: false,
+                openBackdrop:false,
             }
         }
 
@@ -42,12 +46,20 @@ class CoverPhoto extends Component {
                     }     
                 })
         }//pullphoto
-
+        openBackdrop = () => {
+            this.setState({openBackdrop:true,})
+        }
+    
+        closeBackdrop = () => {
+            this.setState({openBackdrop:false})
+        }
         render(){
            return(
                 <div className = {styles.coverphoto_container}>
-                
-                    {this.state.imgLoaded && <img src = {this.state.coverPhoto} className = {styles.coverphoto} alt=""></img>}
+                    <Backdrop style = {{zIndex: 999}} open={this.state.openBackdrop} onClick= {this.closeBackdrop}>
+                        <img src = {this.state.coverPhoto} className = {styles.coverphoto_backdrop} alt=""></img>
+                    </Backdrop>
+                    {this.state.imgLoaded && <img src = {this.state.coverPhoto} className = {styles.coverphoto} alt="" onClick = {this.openBackdrop}></img>}
                 
                 </div>
            )

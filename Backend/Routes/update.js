@@ -106,10 +106,9 @@ router.route('/avatar').post((req, res) => {
  //POST request to tweet with optional photos attached to it
  //expects message to be sent with tag "message"
  //expects all files to be sent from with tag "file"
- router.route('/tweet').post((req, res) =>{
+ router.route('/tweet').post((req, res) =>{  
     const authHeader = req.get('authorization')
     const token = authHeader && authHeader.split(' ')[1]
-    
     //if(token == null) res.sendStatus(401).json({message : "lack permission"})
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
