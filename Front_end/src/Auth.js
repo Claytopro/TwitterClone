@@ -7,7 +7,7 @@ import axios from '../node_modules/axios/dist/axios.js';
 class Auth {
 
     constructor(){
-        this.user = ''
+        this.username = ''
         this.authenticated = false;
         this.token = null;
         this.refreshToken = null;
@@ -21,6 +21,7 @@ class Auth {
             "password" : password
             }).then((res) => {
                 //succesfull authentication
+                this.username = username;
                 this.authenticated = true;
                 this.refreshToken = res.data.refreshToken;
                 this.token =  res.data.accessToken;
@@ -104,8 +105,7 @@ class Auth {
 
 
     sendTweet(message , isRetweet,files,callback){
-        console.log(files);
-        this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk5MDA2NDAyLCJleHAiOjE1OTkwMTAwMDJ9.ZU9bVVvSNe2xgTMlXHKikjErY0YsTl8PRZIG78N8JaQ'
+        //console.log(files);
         
         if(files.length ===0) {
             const headers = {
@@ -148,11 +148,40 @@ class Auth {
             },(error) =>{
                 console.log(error);
                 callback(401)
-                
             })   
         }
-
     }
+
+    updateProfileInfo(description, displayName,website,location,callback){
+        const data = {
+            "description" : ((description.length >0) ? description : undefined),
+            "displayName" : ((displayName.length >0) ? displayName : undefined),
+            "website" : ((website.length >0) ? website : undefined),
+            "location" : ((location.length >0) ? location : undefined),
+        }
+       
+        //this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk5MDgzNTAyLCJleHAiOjE1OTkwODcxMDJ9.eoC0b9sxPS5gaw-G-PzawwApkxwksL-9-b-ZHQPqW0M'
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.token
+        }
+
+        axios.post('http://localhost:5000/update/profileinfo',
+        data,
+        {
+            headers: headers
+        }).then((res) => {
+               console.log(res);
+               callback(200)
+                
+            },(error) =>{
+                console.log(error);
+                callback(401)
+                
+            })   
+    }
+    
 
     
 

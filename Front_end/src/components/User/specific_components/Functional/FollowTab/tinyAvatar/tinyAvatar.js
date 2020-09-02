@@ -19,6 +19,9 @@ class tinyAvatar extends Component {
             profileImg : '',
             username : props.username,
             displayname : '',
+            description : '',
+            following: '',
+            followers : '',
             showPopper: false,
         }
     }
@@ -34,6 +37,18 @@ class tinyAvatar extends Component {
            })
            this.getImage(this.state.username,res.data.profileImage)
         })
+
+        Auth.getUser(this.state.username, (responce) =>{
+            let data = responce;
+            if(data === null) return
+            this.setState({
+                displayName : data.displayName,
+                description: data.description,
+                following : data.following.length,
+                followers : data.followers.length,
+            })
+        })
+
     }
 
     getImage(username, imgpath){
@@ -54,7 +69,6 @@ class tinyAvatar extends Component {
     }
 
     handleProfileDropDown = () => {
-       
         this.setState({
             showPopper: true,
         });
@@ -83,7 +97,21 @@ class tinyAvatar extends Component {
                     anchorEl = {this.avatarRef.current} 
                 >
                  <div className = {styles.Popper}>
-                     hop
+                    <Avatar  alt = "" src = {this.state.profileImg}
+                     style={{height: '60px',width : '60px', marginLeft:"10px",marginTop: '10px'}} />
+                    <div className = {styles.Popper_info}>
+                        <h3 style = {{margin : '0px',}}>{this.state.displayName}</h3>
+                        {'@' + this.state.username}
+                    </div>
+
+                    <div className = {styles.Popper_info}>
+                        {this.state.description}
+                    </div>
+
+                    <div className = {styles.Popper_info2}>
+                        <p className = {styles.follow}>{this.state.followers} Follower </p>
+                        <p>{this.state.following} Following</p> 
+                    </div>
                  </div>
                 </Popper>
                 

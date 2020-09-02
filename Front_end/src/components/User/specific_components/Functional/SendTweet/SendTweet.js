@@ -104,7 +104,7 @@ class SendTweet extends Component {
                 {this.state.successfullTweet && <div className = {styles.successfullTweet}>Tweet Sent </div>}
                 {this.state.errorTweet && <div className = {styles.errorTweet}>Error Sending Tweet</div>}
 
-                <textarea ref ='tweetarea' type = "text" className={styles.message} name = "message" onChange={ this.handleChange} required = "required"></textarea>
+                <textarea ref ='tweetarea' type = "text" className={styles.message} name = "message" onChange={ this.handleChange} ></textarea>
                     
                 <div className = {styles.uploadArea}>
                     {this.state.previews.map((file, i) => {    

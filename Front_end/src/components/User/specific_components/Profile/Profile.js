@@ -188,11 +188,12 @@ class Profile extends Component {
                            </div>
                         </div>
 
-                        <SendTweet />
+                        {(Auth.username === this.state.username) && <SendTweet />}
+                        
 
                         <div>
                             {this.state.tweets.map(tweet => (
-                                <Tweets key={tweet._id} tweet = {tweet} avatarImg = {this.state.profileImg}/>
+                                <Tweets key={tweet._id} tweet = {tweet} avatarImg = {this.state.profileImg} displayName = {this.state.displayName}/>
                             ))}
                         </div>
                         

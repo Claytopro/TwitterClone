@@ -31,7 +31,7 @@ class LeftSideBar extends Component {
                         {!this.state.matches && ("")} 
                     </Link>
                   
-                    <Link to = "/home" className = {styles.linkstyle} >
+                    <Link to = "/settings" className = {styles.linkstyle} >
                         <SettingsIcon style = {{fontSize: 30 ,paddingRight:"10px"}}/> 
                         {this.state.matches && ("Settings")}
                         {!this.state.matches && ("")} 

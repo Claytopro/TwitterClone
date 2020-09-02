@@ -14,7 +14,8 @@ import Retweet from '../../../Universal/RetweetIcon/Retweet'
 
  function Tweets (props) {
         let info = props.tweet;
-        
+        let displayName = props.displayName
+
         return(
             <div className = {styles.tweet_container}>
                 <div className = {styles.avatar_container}>
@@ -25,7 +26,7 @@ import Retweet from '../../../Universal/RetweetIcon/Retweet'
 
                 <div className = {styles.info_container}>
                     <div className = {styles.header_container}>
-                        <Link to = {'/' + info.user} className = {styles.links}>{info.user}</Link>
+                        <Link to = {'/' + info.user} className = {styles.links}>{displayName}</Link>
                         <span style={{color: 'gray',paddingLeft:"5px"}}>@{info.user} · {toDate(info.createdAt)} </span>
                     </div>
                     <p className = {styles.description}>
