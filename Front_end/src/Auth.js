@@ -7,6 +7,7 @@ import axios from '../node_modules/axios/dist/axios.js';
 class Auth {
 
     constructor(){
+        this.user = ''
         this.authenticated = false;
         this.token = null;
         this.refreshToken = null;
@@ -102,27 +103,58 @@ class Auth {
     }
 
 
-    sendTweet(message , isRetweet){
-        this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk4OTc4MTcxLCJleHAiOjE1OTg5ODE3NzF9.SLnuUilUJewXxHBTKLocDaJkRoEkJWpKKo-7n3UC1-s'
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + this.token
+    sendTweet(message , isRetweet,files,callback){
+        console.log(files);
+        this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk5MDA2NDAyLCJleHAiOjE1OTkwMTAwMDJ9.ZU9bVVvSNe2xgTMlXHKikjErY0YsTl8PRZIG78N8JaQ'
+        
+        if(files.length ===0) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.token
+            }
+            axios.post('http://localhost:5000/update/tweet',{
+                "message" : message,
+                'isRetweet' : isRetweet,
+            },{
+                headers: headers
+            }).then((res) => {
+               console.log(res);
+               
+               callback(200)
+            },(error) =>{
+                console.log(error);
+                callback(401) 
+            })   
+        }else{
+            const headers = {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Bearer ' + this.token
+            }
+            //create Form Data from function parameters
+            let formData = new FormData();
+            formData.append("message", message)
+            formData.append('isRetweet',isRetweet)
+            files.forEach(element => {
+                formData.append("file", element);
+                console.log(element);
+            });
+
+            axios.post('http://localhost:5000/update/tweet',formData,{
+                headers: headers
+            }).then((res) => {
+               console.log(res);
+               callback(200)
+                
+            },(error) =>{
+                console.log(error);
+                callback(401)
+                
+            })   
         }
 
-        axios.post('http://localhost:5000/update/tweet',{
-            "message" : message,
-            'isRetweet' : isRetweet,
-        },{
-            headers: headers
-        }).then((res) => {
-           console.log(res);
-            
-        },(error) =>{
-            console.log(error);
-
-            
-        })   
     }
+
+    
 
 }
 

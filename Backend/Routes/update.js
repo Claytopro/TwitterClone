@@ -122,7 +122,9 @@ router.route('/avatar').post((req, res) => {
             let message = req.body.message
             let photos = []
 
+           
             //TODO: reduce this to a function
+            
             if(req.files){
                 const file = req.files.file;
                

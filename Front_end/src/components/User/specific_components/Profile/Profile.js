@@ -43,6 +43,7 @@ class Profile extends Component {
             dateJoined : '',
             hasLoaded : false,
             openBackdrop : false,
+            isAuthenticated : false,
         }
     }
 
@@ -96,6 +97,8 @@ class Profile extends Component {
                
             })
 
+
+            
  
         })
     }

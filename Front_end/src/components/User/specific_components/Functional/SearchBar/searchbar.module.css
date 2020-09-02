@@ -2,13 +2,10 @@
     background-color: inherit;
     font-size: 18px;
     border: none;
-   
     width: 100%;
-    
 }
 
 .searchbar_input:focus{
-    
     border: 1px solid black;
     outline: none;
 }

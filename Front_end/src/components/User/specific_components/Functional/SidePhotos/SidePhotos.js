@@ -21,7 +21,10 @@ class SidePhotos extends Component {
     componentDidMount(){
       
         this.state.imagesToPull.forEach((item,index) =>{
-            this.pullPhoto(item,this.state.user)
+            if(index < 6){
+                this.pullPhoto(item,this.state.user)
+
+            }
         })
         if(this.state.imagesToPull.length < 6){
          //add placeholder images 
