@@ -40,8 +40,9 @@ class SearchBar extends Component {
             "username" : toFind,
         })
         .then(res => {
+            //if(res.date)
             this.setState({users: res.data})
-            //console.log(JSON.stringify(res.data));
+            console.log(res.data.length);
            
         })
     }
@@ -67,6 +68,7 @@ class SearchBar extends Component {
                         }
                        {(this.state.users.length > 0) && this.state.users.map((user, i) => {  
                             if(i>10) return false  
+                           
                             return (
                                 <div key = {user.username} className = {styles.userList} styles = {{height:'100px'}}>
                                     <TinyAvatar username = {user.username}/>
@@ -77,6 +79,10 @@ class SearchBar extends Component {
                                 </div>
                                 )
                             })}
+                            
+                        {((this.state.searchbar.length > 0) && (this.state.users.length === undefined)) && 
+                            <p style = {{marginTop:'0px'}}>No Users Found</p>
+                        }
             
                 </div>}
 
