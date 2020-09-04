@@ -25,7 +25,7 @@ class LeftSideBar extends Component {
                         <TwitterIcon style={ {fontSize: 50 , color : "rgb(29, 161, 242)"}} />
                     </Link>
     
-                    <Link to = "/home" className = {styles.linkstyle}>
+                    <Link to = "/explore" className = {styles.linkstyle}>
                         <HashtagIcon style = {{fontSize: 30,paddingRight:"10px"}} />
                         {this.state.matches && ("Explore")}
                         {!this.state.matches && ("")} 

@@ -89,8 +89,10 @@ class Auth {
     }
 
    
-    //Call to retrieve image from server return null if image does not exist
+    //Call to retrieve aggregated tweets for all followed users
     getImages(username,img,callback){
+
+
         axios.get('http://localhost:5000/images/' + username +'/' + img,{ responseType: 'arraybuffer' },)
         .then((res) => {
            
@@ -181,9 +183,64 @@ class Auth {
                 
             })   
     }
-    
 
+
+    addFollower(callback,userToFollow) {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.token
+        }
+        axios.post('http://localhost:5000/update/follow',{
+           'follow' : userToFollow
+        },{
+            headers: headers
+        }).then((res) => {
+           console.log(res);
+           
+           callback()
+        },(error) =>{
+            console.log(error);
+             
+        })   
+        
+    }
+
+    removeFollower(callback,userToUnfollow) {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.token
+        }
+        axios.post('http://localhost:5000/update/unfollow',{
+           'unfollow' : userToUnfollow
+        },{
+            headers: headers
+        }).then((res) => {
+           console.log(res);
+           
+           callback()
+        },(error) =>{
+            console.log(error);
+            
+        })   
+    }
     
+    getMainfeed(callback){
+        this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk5MjQ4MDQ1LCJleHAiOjE1OTkyNTE2NDV9.Nurtw1YzPkFxAIlDw0GFTzeAMkTKcGKi89MnkpskdEM'
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this.token
+        }
+        
+        axios.get('http://localhost:5000/update/feed',{
+            headers: headers
+        }).then((res) => {
+            console.log(res)
+            callback(res)
+         },(error) =>{
+             console.log(error)
+         })   
+    }
+
 
 }
 

@@ -9,6 +9,8 @@ import AddAPhotoIcon from '@material-ui/icons/AddAPhoto'
 class SendTweet extends Component {
     constructor(props){
         super(props)
+        this.didTweet = props.didTweet;
+
         this.state = {
             message: '',
             files : [],
@@ -61,8 +63,9 @@ class SendTweet extends Component {
         }
        
     }
-
+//TODO protect from memory leak if state updates after user naviagtes before 3 second timer
     showSuccess  = () => {
+        this.didTweet();
         this.setState({
             successfullTweet : true,
         })

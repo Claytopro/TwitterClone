@@ -44,6 +44,7 @@ class Profile extends Component {
             hasLoaded : false,
             openBackdrop : false,
             isAuthenticated : false,
+            isFollowing : false,
         }
     }
 
@@ -79,7 +80,7 @@ class Profile extends Component {
                 tweets: data.tweets,
                 dateJoined : createdDate,
                 hasLoaded : true,
-            })
+            }, () => {this.isFollowing()})
           
             //chain callback to ensure asyn database calls complete before updating state
             Auth.getImages(this.state.username,data.profilePhotoPath, (response) =>{
@@ -96,16 +97,61 @@ class Profile extends Component {
                });
                
             })
-
-
-            
- 
         })
     }
 
     
+
+    isFollowing = () => {
+        if(this.state.followers === undefined) return
+
+        if(this.state.followers.includes(Auth.username)){
+            this.setState({
+                isFollowing:true,
+            })
+        }else{
+            this.setState({
+                isFollowing:false,
+            })
+        }
+    }
+
     follow = () =>{
-        console.log("follow");
+        if(this.state.isFollowing){
+            console.log("UNfollow");
+            Auth.removeFollower(()=>{this.didUnfollowed(Auth.username)},this.state.username )
+        }else{
+            console.log("follow");
+            Auth.addFollower(()=>{this.didFollow(Auth.username)},this.state.username )
+        }
+    }
+
+    didFollow = (user) =>{
+        this.setState({isFollowing:true,
+        followers:this.state.followers.concat([user])})
+    }
+
+    didUnfollowed = (user) =>{
+        //find user and removed from array of followers
+        let array = this.state.followers;
+        let index = array.indexOf(user)
+        array.splice(index, 1);
+
+        this.setState({
+            isFollowing:false,
+            followers:array,
+        })
+    }
+
+    didTweet = () =>{
+        //pull tweets from database again?
+        Auth.getUser(this.state.username, (responce) =>{
+            if(responce === null) return
+            this.setState({
+                tweets: responce.tweets,
+            })
+        })
+
     }
 
     openBackdrop = () => {
@@ -147,14 +193,16 @@ class Profile extends Component {
                             <div className = {styles.info_profilephoto}>
                                 <div className = {styles.profileImg_container}>
                                     <img src = {this.state.profileImg} className = {styles.profileImage} alt="" onClick={this.openBackdrop}></img>
+                                    {!(this.state.username === Auth.username) &&
                                     <div className = {styles.followbtn}>
                                         <Chip
                                             variant="outlined" 
-                                            label = "Follow"
-                                            style={{height: '35px',width: '70px',color: 'rgb(29, 161, 242)',borderColor:'rgb(29, 161, 242)', fontWeight:'bolder'}}
+                                            label = {this.state.isFollowing? 'UnFollow' : 'Follow'}
+                                            style={{height: '35px',width: '80px',color: 'rgb(29, 161, 242)',borderColor:'rgb(29, 161, 242)', fontWeight:'bolder'}}
                                             onClick = {this.follow}
                                         />
                                     </div>
+                                    }
                                 </div>
                                 {/*display under avatar*/}
                                 <h3 style={{marginBottom: '0px',marginTop : '0px',paddingLeft:'4px'}}>{this.state.displayName}</h3>
@@ -184,18 +232,19 @@ class Profile extends Component {
                                     </span> 
                                 </div>
                                 {/*Ensure follower arrays are loaded before sending info to component */}
-                                {(this.state.followers) &&<FollowTab followers = {this.state.followers} following = {this.state.following} />}
+                                {(this.state.followers) &&<FollowTab key={this.state.followers} followers = {this.state.followers} following = {this.state.following} />}
                            </div>
                         </div>
 
-                        {(Auth.username === this.state.username) && <SendTweet />}
+                        {(Auth.username === this.state.username) && <SendTweet didTweet = {this.didTweet}/>}
                         
 
-                        <div>
-                            {this.state.tweets.map(tweet => (
-                                <Tweets key={tweet._id} tweet = {tweet} avatarImg = {this.state.profileImg} displayName = {this.state.displayName}/>
-                            ))}
-                        </div>
+
+                        {this.state.tweets.map(tweet => (
+                            <Tweets key={tweet._id} tweet = {tweet}/>
+                        ))}
+                        
+                        
                         
                     </div>{/*end of user info div */}
                     

@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect , useState} from 'react';
+import Auth from '../../../../Auth'
+import axios from 'axios';
 //styles
 import styles from './Tweet.module.css'
 
@@ -14,13 +16,55 @@ import Retweet from '../../../Universal/RetweetIcon/Retweet'
 
  function Tweets (props) {
         let info = props.tweet;
-        let displayName = props.displayName
+      
+        //state variables to hold the porfile images name to be pulled from the server,
+        //the displayname of the user(which must be parsed from db because it can be changed)
+        //and finally the actuall image is pulled from the server and transformed into visible
+        const [imgPath , setImgPath] = useState('');
+        const [image, setImage] = useState('');
+        const [displayName, setDisplayname] = useState('');
+        useEffect(()=>{
+            if(!image){
+                getImagePath();
+            }
+        })
+
+        const getImagePath = async () => {
+            axios.post('http://localhost:5000/update/avatarpic',
+            {
+                "username" : info.user,
+            })
+            .then(res => {
+                setDisplayname(res.data.displayName)
+                setImgPath(res.data.profileImage)
+                getImage(imgPath)
+
+                
+            })
+        }
+
+        const getImage = async (imgName) => {
+            if(imgName.length ===0) return
+            Auth.getImages(info.user,imgName, (response) =>{
+                //convert image to base64 string
+                const base64 = btoa(
+                    new Uint8Array(response).reduce(
+                      (response, byte) => response + String.fromCharCode(byte),
+                      '',
+                    ),
+                  );
+                  //setState for User Information retreived from database
+               
+                setImage("data:;base64," + base64)
+            })
+        }
+
 
         return(
             <div className = {styles.tweet_container}>
                 <div className = {styles.avatar_container}>
                     <Link to = {'/' + info.user}>
-                    <Avatar alt = "" src = {props.avatarImg} style={{height: '70px',width : '70px', margin:"10px"}}/>
+                    <Avatar alt = "" src = {image} style={{height: '70px',width : '70px', margin:"10px"}}/>
                     </Link>
                 </div>
 
