@@ -20,8 +20,8 @@ app.use(fileUpload({
 app.use(bodyParser.json())
 
 
-//const uri = process.env.DATABASE_URI;
-const uri = "mongodb://localhost:27017/TwitterClone";
+const uri = process.env.DATABASE_URI;
+//const uri = "mongodb://localhost:27017/TwitterClone";
 mongoose.connect(uri,{useNewUrlParser:true, useCreateIndex: true , useUnifiedTopology: true});
 
 const connection = mongoose.connection;
