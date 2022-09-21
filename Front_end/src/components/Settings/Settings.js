@@ -10,6 +10,7 @@ import LeftSideBar from '../User/specific_components/Functional/Left_sidebar/Lef
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import BackIcon from '@material-ui/icons/ArrowBack'
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto'
 
 class Settings extends Component {
     _isMounted = false;
@@ -27,6 +28,8 @@ class Settings extends Component {
             coverPhoto : '',
             uploadedImgs: [],
             password : '',
+            files: '',
+            previews : '',
             hasUpdated : false,
             hasError : false,
             isLoggedIn: false,
@@ -141,6 +144,35 @@ class Settings extends Component {
           },3000); 
     }
 
+    onFileChange = event => { 
+  
+        let uploads=Array.from(event.target.files);
+        let uploadsImgs = []
+        //create image reference for each file uploaded that will be displayed to user
+        uploads.forEach((file,i) => {
+            uploadsImgs[i] = URL.createObjectURL(event.target.files[i])
+        });
+       
+        // Update the state 
+        this.setState({ 
+            files: uploads,
+            previews : uploadsImgs
+        }) 
+    
+      }; 
+
+      UpdateProfilePhoto = () => {
+          if(this.state.files.length < 1) return
+
+          Auth.UpdateProfilePhoto(this.state.files, (res) => {
+             if(res === 200){
+                this.showSuccess()
+             }else{
+                 this.showError()
+             }
+          })
+      }
+
 
     render(){
         return(
@@ -154,6 +186,10 @@ class Settings extends Component {
                                 <BackIcon style={ {fontSize: 30, color : "rgb(29, 161, 242)", paddingRight : '10px'}} />
                             </Link>
                             <h3>Edit Info</h3>
+                        
+                         {this.state.hasUpdated && <div className = {styles.notify}>Update successfull</div>}
+                         {this.state.hasError && <div className = {styles.notify_error}>Error Updating</div>}
+                         
                            
                             <TextField id = 'display-name' label = 'Display Name' placeholder = {this.state.displayName}  name = "displayName" onChange={ this.handleChange} />    
                             <TextField
@@ -168,12 +204,35 @@ class Settings extends Component {
                             <TextField id = 'website-name' label = 'Website' placeholder = {this.state.website} name = "website" onChange={ this.handleChange} />    
                             <TextField id = 'location-name' label = 'Location' placeholder = {this.state.location} name = "location" onChange={ this.handleChange} />    
                             <Button variant="outlined" style = {{color:'#1da1f2',borderColor:'rgb(29, 161, 242)',float : 'right',margin:'10px'}} onClick = {this.submitChanges}>Submit</Button>
-                            {this.state.hasUpdated && <div className = {styles.notify}>Update successfull</div>}
-                            {this.state.hasError && <div className = {styles.notify_error}>Error Updating</div>}
+                            
+                            {/*Updating Profile picture */}
+                            <h3>Edit Profile Picture</h3>
+                            <div className = {styles.editProfileArea}> 
+                                <Button
+                                    className = {styles.addphoto}
+                                    component="label"
+                                    >
+                                    <AddAPhotoIcon style = {{fontSize: '35px'}}/>
+                                        <input
+                                            type="file"
+                                            style={{ display: "none" }}
+                                            onChange={this.onFileChange}
+                                        />
+                                </Button>
+                                <div >
+                                    {(this.state.files.length > 0) && 
+                                        <img src = {this.state.previews} alt = "" className = {styles.profileImage}/>
+                                    }
+                               </div>
+                            </div>
+
+                            <Button variant="outlined" style = {{color:'#1da1f2',borderColor:'rgb(29, 161, 242)',float : 'right',margin:'10px'}} onClick = {this.UpdateProfilePhoto}>Update Profile Picture</Button>
+                            
 
                         </div>}
 
                         {(!this.state.isLoggedIn) && 
+                        //TODO make this its own component
                         <div className = {styles.form_container}>
                             <h3>Login</h3>
                             

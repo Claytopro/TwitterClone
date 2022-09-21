@@ -107,8 +107,8 @@ router.route('/register').post((req,res) => {
           if(!err){
             res.json('User Created')
           }else{
-            newLogin.findOneAndDelete({username:username}, function(err,docs){
-              console.log("successfully aborted registration");
+            LoginValidation.findOneAndDelete({username:username}, function(err,docs){
+              console.log("successfully aborted registration" + err);
             })
             res.json('Error:' + err)
           }

@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Auth from '../../Auth'
 import styles from './Register.module.css'
 
+//Material-UI components
+import Button from '@material-ui/core/Button'
+
 class Register extends Component {
     constructor(props){
         super(props)
@@ -99,31 +102,35 @@ class Register extends Component {
             <div className = {styles.main}>
                     <form>
                         <h1>Create your account</h1>
+                        {/*Handles Email */}
                         <div className = {styles.input_container}>
                             <h3 className = {styles.h3_input}>Email:</h3>
                             <span style={{color: "red"}}>{this.state.errors["email"]}</span>
                             <input type = "text" className={styles.input_register} name = "email" onChange={ this.handleChange} required = "required"></input>
                         </div>
 
+                        {/*Handles Username */}
                         <div className = {styles.input_container}>
                             <h3 className = {styles.h3_input}>Username:</h3>
                             <span style={{color: "red"}}>{this.state.errors["username"]}</span>
                             <input type = "text" className={styles.input_register} name = "username" onChange={ this.handleChange }></input>
                         </div>
-
+                        {/*Handles Password */}    
                         <div className = {styles.input_container}>
                             <h3 className = {styles.h3_input}>Password:</h3>
                             <span style={{color: "red"}}>{this.state.errors["password"]}</span>
                             <input type = "text" className={styles.input_register} name = "password" onChange={ this.handleChange }></input>
                         </div>
-
+                        {/*Handles Password confirmation and matching */}    
                         <div className = {styles.input_container}>
                             <h3 className = {styles.h3_input}>Confirm Password:</h3>
                             <span style={{color: "red"}}>{this.state.errors["confirmedPass"]}</span>
                             <input type = "text" className={styles.input_register} name = "confirmedPass" onChange={ this.handleChange }></input>
                         </div>
+
+                          {/*Handles Register Button */}    
                         <div className = {styles.button_div}>
-                            <button className = {styles.nice_button} onClick = {this.handleRegister}>Create Account</button>
+                            <Button variant="outlined" style = {{color:'#1da1f2',borderColor:'rgb(29, 161, 242)',margin:'10px'}} onClick = {this.handleRegister}>Create Account</Button>
                         </div>
                     </form>
                 

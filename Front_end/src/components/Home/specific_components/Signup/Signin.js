@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styles from './Signup.module.css'
 import {Link} from 'react-router-dom';
 
+//Material-ui components
+import Chip from '@material-ui/core/Chip'
 
 class Signin extends Component {
     constructor(props){
@@ -37,33 +39,40 @@ class Signin extends Component {
     render(){
         return(
             <div className = {styles.wrapper}> 
-    
+                
+                {/*Form used to parse login information */}
                 <form className = {styles.formstyle}> 
                     <div className = {styles.input_field}>
-                        {this.state.failLogin ? (<h4>Incorrect username or pass</h4>) : ( <h4>username</h4>) }
-                       
+                        {/*Username input */}
+                        <h4 style = {{marginTop:'0px'}}>{this.state.failLogin ? 'Incorrect username or pass' : 'Username'}</h4>
                         <input type = "text" className={styles.input_signup} name = "username" onChange={ this.handleChange } ></input>
                     </div>
                     <div className = {styles.input_field}>
-                        <h4>password</h4>
+                         {/*Password input */}
+                        <h4 style = {{marginTop:'0px'}}>password</h4>
                         <input type = "password" className={styles.input_signup} name = "password" onChange={ this.handleChange } ></input>
     
                     </div>
                     <div className = {styles.input_field}>
+                        <Chip
+                            variant="outlined" 
+                            label =  'Login'
+                            style={{height: '35px',width: '80px',color: 'rgb(29, 161, 242)',borderColor:'rgb(29, 161, 242)', fontWeight:'bolder'}}
+                            onClick = {this.handleLogin} 
+                        />
                        
-                        <button onClick = {this.handleLogin} 
-                        className = {styles.loginbutton}>Login</button> 
-    
                     </div>
                 </form>
             
                 <div className = {styles.centeritem}>
                     <h2>See what's happening in the world right now</h2>
-    
-                     <div >
-                         <Link to = "/register">Sign up</Link>
-                    </div>   
-    
+                        <Link to = "/register" style = {{width : '80%'}}>
+                            <Chip
+                            variant="outlined" 
+                            label =  'Sign Up'
+                            style={{height: '35px',width: '100%',color: 'rgb(29, 161, 242)',borderColor:'rgb(29, 161, 242)', fontWeight:'bolder'}} 
+                            />
+                        </Link>
                 </div>
         </div>    
         );

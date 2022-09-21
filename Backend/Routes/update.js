@@ -25,7 +25,8 @@ router.route('/avatar').post((req, res) => {
 
             //TODO : check if only one file is being uploaded, look at tweet post request because i did it there
 
-            let fileExtension = req.files.file.name.split('.')[1]
+            let fileExtension = req.files.file.name.split('.');
+            fileExtension = fileExtension[fileExtension.length-1];
             let filename = shortid.generate().toString().concat('.' +fileExtension)
         
             User.updateOne({username:username},{$push: {uploadedPhotos: filename} ,profilePhotoPath: filename},function(err){
@@ -151,6 +152,7 @@ router.route('/avatar').post((req, res) => {
                   })
                 }else{
                      //handle one file upload
+                     //Just found bug where they have to be JPG
                     let fileExtension = file.name.split('.')[1]
                     let filename = shortid.generate().toString().concat('.' +fileExtension)
                     photos.push(filename)
@@ -392,7 +394,7 @@ router.route('/feed').get((req, res) => {
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,user) =>{
         if(err){
-            //console.log(err);
+            console.log(err);
             res.status(401).json({message : "lack permission in route /feed"})
         }else{ //authenticated successfully
             let username = user.username
@@ -417,7 +419,8 @@ router.route('/feed').get((req, res) => {
                         }},
                     ]).exec(function (err, data) {
                         //return array of (JSON object)tweets aggregated for all user that are being followed 
-                        res.status(200).json(data[0].combinedTweets)
+                        let feed = data.length > 0 ? data[0].combinedTweets : null;
+                        res.status(200).json(feed);
                     })
                    
                 }
@@ -439,7 +442,7 @@ function compressPhoto(username,filename) {
             plugins: [
                 imageminMozjpeg({quality: 50}),
                 imageminPngquant({
-                    quality: 50
+                    quality: [0.3, 0.5]
                 })
             ]
         }); 

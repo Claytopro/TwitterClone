@@ -34,7 +34,7 @@ class MainFeed extends Component {
                     <div className = {styles.mainfeed}>
                         <SeachBar/>
                         <h2>News Feed</h2>
-                        {(this.state.tweets.length === 0) && <p>Not Logged in</p>}
+                        {(this.state.tweets.length === 0) && <p>No Tweets</p>}
                         {this.state.tweets.map(tweet => (
                             <Tweets key={tweet._id} tweet = {tweet}/>
                         ))}

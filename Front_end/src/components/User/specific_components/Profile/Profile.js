@@ -195,6 +195,7 @@ class Profile extends Component {
                                     <img src = {this.state.profileImg} className = {styles.profileImage} alt="" onClick={this.openBackdrop}></img>
                                     {!(this.state.username === Auth.username) &&
                                     <div className = {styles.followbtn}>
+                                        {/*Follow Button */}
                                         <Chip
                                             variant="outlined" 
                                             label = {this.state.isFollowing? 'UnFollow' : 'Follow'}

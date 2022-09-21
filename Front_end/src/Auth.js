@@ -138,7 +138,7 @@ class Auth {
             formData.append('isRetweet',isRetweet)
             files.forEach(element => {
                 formData.append("file", element);
-                console.log(element);
+                //console.log(element);
             });
 
             axios.post('http://localhost:5000/update/tweet',formData,{
@@ -225,7 +225,6 @@ class Auth {
     }
     
     getMainfeed(callback){
-        this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3QyIiwiaWF0IjoxNTk5MjQ4MDQ1LCJleHAiOjE1OTkyNTE2NDV9.Nurtw1YzPkFxAIlDw0GFTzeAMkTKcGKi89MnkpskdEM'
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + this.token
@@ -239,6 +238,31 @@ class Auth {
          },(error) =>{
              console.log(error)
          })   
+    }
+
+    UpdateProfilePhoto(files, callback){
+        const headers = {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer ' + this.token
+        }        
+       
+        let formData = new FormData();
+
+        formData.append("file", files[0]);
+          
+
+
+        axios.post('http://localhost:5000/update/avatar',formData,{
+            headers: headers
+        }).then((res) => {
+           console.log(res);
+           callback(200)
+            
+        },(error) =>{
+            console.log(error);
+            callback(401)
+        })  
+
     }
 
 

@@ -63,8 +63,7 @@ class CoverPhoto extends Component {
                 
                 </div>
            )
-        }
-            
+        }       
 }
 
 export default CoverPhoto;
